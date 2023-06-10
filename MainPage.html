@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Tracker</title>
+    <style>
+        body {
+            background-color: #111111;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #111111;
+            height: 60px;
+            padding: 0 20px;
+        }
+        
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar {
+            background-color: #111111;
+            color: #ffffff;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            transition: left 0.3s ease;
+            padding-top: 60px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        
+        .sidebar li:hover {
+            background-color: #111111;
+        }
+        
+        .content {
+            margin-left: 0; /* Inicialmente sem margem à esquerda */
+            padding: 20px;
+            transition: margin-left 0.3s ease; /* Efeito de transição suave */
+        }
+        
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            background-image: url('https://i.imgur.com/J1tbkD6.png'); /* Substitua com o URL da sua imagem */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 250px; /* Defina a altura desejada para a imagem */
+            width: 150%; /* Defina a largura desejada para a imagem */
+            margin-left: -25%;
+        }
+        
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            width: 40%;
+            margin-top: 90px;
+            margin-left: 600px;
+        }
+        
+        .chart-canvas {
+            display: inline-block;
+            width: 300px; /* Ajuste a largura dos gráficos conforme necessário */
+            height: 200px; /* Ajuste a altura dos gráficos conforme necessário */
+        }
+        
+        /* Estilos para exibir/ocultar a barra lateral e expandir o conteúdo principal */
+        .sidebar-visible {
+            left: 0;
+        }
+        
+        .content-expanded {
+            margin-left: 200px;
+        }
+    </style>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var apiUrl = "https://api.thingspeak.com/channels/2183910/feeds.json?api_key=IAF0DP7QRBN9OFB7&results=10";
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro na solicitação da API");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    // Processar os dados recebidos do ThingSpeak aqui
+                    var field1Data = [];
+                    var field2Data = [];
+                    var createdDate = [];
+                    
+                    for (var i = 0; i < data.feeds.length; i++) {
+                        field1Data.push(data.feeds[i].field1);
+                        field2Data.push(data.feeds[i].field2);
+                        createdDate.push(moment(data.feeds[i].created_at).format("MMM D, h:mm:ss A"));
+                    }
+                    
+                    var ctx1 = document.getElementById("myChart1").getContext("2d");
+                    var myChart1 = new Chart(ctx1, {
+                        type: "line",
+                        data: {
+                            labels: createdDate,
+                            datasets: [{
+                                label: "Batimentos Cardíacos",
+                                data: field1Data,
+                                backgroundColor: "rgba(0, 255, 67, 0.5)",
+                                borderColor: "rgba(0, 255, 67, 1)",
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        fontSize: 10,
+                                        min: 0,
+                                        max: 10
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        fontSize: 10
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    var ctx2 = document.getElementById("myChart2").getContext("2d");
+                    var myChart2 = new Chart(ctx2, {
+                        type: "line",
+                        data: {
+                            labels: createdDate,
+                            datasets: [{
+                                label: "Temperatura em C°",
+                                data: field2Data,
+                                backgroundColor: "rgba(0, 255, 67, 0.5)",
+                                borderColor: "rgba(0, 255, 67, 1)",
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        fontSize: 10,
+                                        min: 0,
+                                        max: 10
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        fontSize: 10
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                    // Lidar com erros de solicitação ou resposta do ThingSpeak aqui
+                });
+                
+            // Evento de clique no botão do logotipo
+            var logoButton = document.getElementById("logoButton");
+            var closeButton = document.getElementById("closeButton");
+            var sidebar = document.querySelector(".sidebar");
+            var content = document.querySelector(".content");
+            
+            logoButton.addEventListener("click", function() {
+                sidebar.classList.toggle("sidebar-visible"); // Alternar visibilidade da barra lateral
+                content.classList.toggle("content-expanded"); // Expandir conteúdo principal
+            });
+
+            closeButton.addEventListener("click", function() {
+                sidebar.classList.remove("sidebar-visible"); // Fechar barra lateral
+                content.classList.remove("content-expanded"); // Reduzir conteúdo principal
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <button id="logoButton" style="background: none; border: none; cursor: pointer;">
+            <img src="https://i.imgur.com/grMplip.png" alt="Logo">
+        </button>
+        <h1>Heart Tracker</h1>
+    </div>
+    <div class="sidebar">
+        <ul>
+            <li>Perfil</li>
+            <li>Dados Históricos</li>
+            <li>Configurações</li>
+            <li><a href="file:///C:/Users/diniz/OneDrive/Documentos/VS%20Code/HeartTracker/LoginScreen.html">Sair</a></li>
+        </ul>
+        <button id="closeButton" style="background: none; border: none; cursor: pointer; position: absolute; top: 10px; right: 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/800px-Red_X.svg.png" alt="Fechar" width="30px">
+        </button>
+    </div>
+    <div class="content">
+        <div class="chart-container">
+            <canvas id="myChart1" class="chart-canvas"></canvas>
+            <canvas id="myChart2" class="chart-canvas"></canvas>
+        </div>
+        <!-- Restante do conteúdo da sua página -->
+    </div>
+</body>
+</html>
