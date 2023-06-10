@@ -170,7 +170,17 @@
                         window.location.href = "MainPage.html";
                     }, 3000);
                 }, 4000);
-            } else {
+            } 
+            if (username === "Admin" && password === "Admin") {
+                loader.style.display = 'block';
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                    myDiv.style.display = 'block';
+                    setTimeout(function() {
+                        window.location.href = "MainPage.html";
+                    }, 3000);
+                }, 4000);
+            }else {
                 notification.textContent = "Senha incorreta.";
                 notification.style.color = "red";
 
