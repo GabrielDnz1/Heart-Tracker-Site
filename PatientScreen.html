@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Tracker</title>
+    <style>
+        body {
+            background-color: #111111;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #111111;
+            height: 60px;
+            padding: 0 20px;
+        }
+        
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar {
+            background-color: #111111;
+            color: #ffffff;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            transition: left 0.3s ease;
+            padding-top: 60px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        
+        .sidebar li:hover {
+            background-color: #111111;
+        }
+        
+        .content {
+            margin-left: 0;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            width: 40%;
+            margin-top: 90px;
+            margin-left: 600px;
+        }
+        
+        .chart-canvas {
+            display: inline-block;
+            width: 300px;
+            height: 200px;
+        }
+        
+        .sidebar-visible {
+            left: 0;
+        }
+        
+        .content-expanded {
+            margin-left: 200px;
+        }
+    </style>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var apiUrl = "https://api.thingspeak.com/channels/2183910/feeds.json?api_key=IAF0DP7QRBN9OFB7&results=10";
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro na solicitação da API");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    // Processar os dados recebidos do ThingSpeak aqui
+                    var field1Data = [];
+                    var field2Data = [];
+                    var createdDate = [];
+                    
+                    for (var i = 0; i < data.feeds.length; i++) {
+                        field1Data.push(data.feeds[i].field1);
+                        field2Data.push(data.feeds[i].field2);
+                        createdDate.push(moment(data.feeds[i].created_at).format("MMM D, h:mm:ss A"));
+                    }
+                    
+                    var ctx1 = document.getElementById("myChart1").getContext("2d");
+                    var myChart1 = new Chart(ctx1, {
+                        type: "line",
+                        data: {
+                            labels: createdDate,
+                            datasets: [{
+                                label: "Batimentos Cardíacos",
+                                data: field1Data,
+                                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                                borderColor: "rgba(75, 192, 192, 1)",
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        fontSize: 10,
+                                        min: 0,
+                                        max: 10
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        fontSize: 10
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    var ctx2 = document.getElementById("myChart2").getContext("2d");
+                    var myChart2 = new Chart(ctx2, {
+                        type: "line",
+                        data: {
+                            labels: createdDate,
+                            datasets: [{
+                                label: "Temperatura Corporal",
+                                data: field2Data,
+                                backgroundColor: "rgba(192, 75, 75, 0.2)",
+                                borderColor: "rgba(192, 75, 75, 1)",
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        fontSize: 5,
+                                        min: 0,
+                                        max: 5
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        fontSize: 5
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                    // Lidar com erros de solicitação ou resposta do ThingSpeak aqui
+                });
+                
+            // Evento de clique no botão do logotipo e fechamento da barra lateral
+            var logoButton = document.getElementById("logoButton");
+            var closeButton = document.getElementById("closeButton");
+            var sidebar = document.querySelector(".sidebar");
+            var content = document.querySelector(".content");
+            
+            logoButton.addEventListener("click", function() {
+                sidebar.classList.toggle("sidebar-visible"); // Alternar visibilidade da barra lateral
+                content.classList.toggle("content-expanded"); // Expandir conteúdo principal
+            });
+            
+            closeButton.addEventListener("click", function() {
+                sidebar.classList.remove("sidebar-visible"); // Fechar barra lateral
+                content.classList.remove("content-expanded"); // Reduzir conteúdo principal
+            });
+            var heartTrackerTitle = document.getElementById("heartTrackerTitle");
+            heartTrackerTitle.addEventListener("click", function() {
+                window.location.href = "MainPage.html"; // Redirecionar para a página MainPage.html
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center;">
+            <button id="logoButton" style="background: none; border: none; cursor: pointer;">
+                <img src="https://i.imgur.com/grMplip.png" alt="Logo">
+            </button>
+            <h1 id="heartTrackerTitle">Heart Tracker</h1>
+        </div>
+        <img src="https://icones.pro/wp-content/uploads/2022/02/icone-de-cloche-verte.png" 
+            alt="Notificações" 
+            width="20px" 
+            height="30px">
+    </div> 
+    <div class="content">
+        <div class="sidebar">
+            <ul>
+                <button id="closeButton" style="background: none; border: none; cursor: pointer; position: absolute; top: 10px; right: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/800px-Red_X.svg.png" alt="Fechar" width="30px">
+                </button>
+                <li>Perfil</li>
+                <li>Estatísticas</li>
+                <li>Configurações</li>
+                <li>Sair</li>
+                </div>
+            </ul>
+        </div>  
+        <img src="https://vasco.com.br/wp-content/uploads/2020/10/ESCUDO-VASCO-RGB-1-450x450.png" 
+        alt="Imagem do Paciente" 
+        width="150px" 
+        height="160px" 
+        style="display: block; margin: 0 auto;">
+        <h1 style="font-size: 30px; text-align: center; margin-top: 10px; margin-bottom: 10px;">Vasco Da Gama</h1>       
+        <h1 style="font-size: 14px; text-align: center;">Idade: 112 Anos</h1>
+        <h1 style="font-size: 14px; text-align: center;">Rua da Falência, N° 777</h1>
+        <h1 style="font-size: 14px; text-align: center;">Contato:(22) 9 2222-2222</h1>  
+        <div class="chart-container">
+            <canvas id="myChart1" class="chart-canvas"></canvas>
+            <canvas id="myChart2" class="chart-canvas"></canvas>
+        </div>
+    </div>
+</body>
+</html>

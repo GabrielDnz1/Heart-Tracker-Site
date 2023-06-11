@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heart Tracker</title>
+    <style>
+        body {
+            background-color: #111111;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #111111;
+            height: 60px;
+            padding: 0 20px;
+        }
+        
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .sidebar {
+            background-color: #111111;
+            color: #ffffff;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -200px;
+            transition: left 0.3s ease;
+            padding-top: 60px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        
+        .sidebar li:hover {
+            background-color: #111111;
+        }
+        
+        .content {
+            margin-left: 0; /* Inicialmente sem margem à esquerda */
+            padding: 20px;
+            transition: margin-left 0.3s ease; /* Efeito de transição suave */
+        }
+        
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            background-image: url('https://i.imgur.com/J1tbkD6.png'); /* Substitua com o URL da sua imagem */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 250px; /* Defina a altura desejada para a imagem */
+            width: 150%; /* Defina a largura desejada para a imagem */
+            margin-left: -25%;
+            cursor: pointer;
+        }
+        
+        .patient-details {
+            background-color: #333333;
+            width: 300px;
+            height: 250px;
+            margin: 0 auto;
+            margin-top: 50px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        /* Estilos para exibir/ocultar a barra lateral e expandir o conteúdo principal */
+        .sidebar-visible {
+            left: 0;
+        }
+        
+        .content-expanded {
+            margin-left: 200px;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Evento de clique no botão do logotipo
+            var logoButton = document.getElementById("logoButton");
+            var closeButton = document.getElementById("closeButton");
+            var sidebar = document.querySelector(".sidebar");
+            var content = document.querySelector(".content");
+            
+            logoButton.addEventListener("click", function() {
+                sidebar.classList.toggle("sidebar-visible"); // Alternar visibilidade da barra lateral
+                content.classList.toggle("content-expanded"); // Expandir conteúdo principal
+            });
+
+            closeButton.addEventListener("click", function() {
+                sidebar.classList.remove("sidebar-visible"); // Fechar barra lateral
+                content.classList.remove("content-expanded"); // Reduzir conteúdo principal
+            });
+
+            var heartTrackerTitle = document.getElementById("heartTrackerTitle");
+            heartTrackerTitle.addEventListener("click", function() {
+                window.location.href = "MainPage.html"; // Redirecionar para a página MainPage.html
+            });
+
+            var patientDetails = document.querySelector(".patient-details");
+            patientDetails.addEventListener("click", function() {
+                window.location.href = "PatientScreen.html"; // Redirecionar para a página PatientScreen.html
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <button id="logoButton" style="background: none; border: none; cursor: pointer;">
+            <img src="https://i.imgur.com/grMplip.png" alt="Logo">
+        </button>
+        <h1 id="heartTrackerTitle">Heart Tracker</h1>
+    </div>
+    <div class="sidebar">
+        <ul>
+            <li>Perfil</li>
+            <li>Dados Históricos</li>
+            <li>Configurações</li>
+            <li><a href="#">Sair</a></li>
+        </ul>
+        <button id="closeButton" style="background: none; border: none; cursor: pointer; position: absolute; top: 10px; right: 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Red_X.svg/800px-Red_X.svg.png" alt="Fechar" width="30px">
+        </button>
+    </div>
+    <div class="patient-details">
+        <img src="https://vasco.com.br/wp-content/uploads/2020/10/ESCUDO-VASCO-RGB-1-450x450.png" alt="Fechar" width="90px" height="90px">
+        <h2>VASCO DA GAMA</h2>
+        <p>Homem</p>
+        <p>Idade: 112 Anos</p>
+        <p>Enfermidade: BPM com Caídas Repentinas</p>
+    </div>
+    <div class="patient-details">
+        <img src="https://cdn.icon-icons.com/icons2/1709/PNG/512/add_112353.png" alt="Fechar" width="90px" height="90px">
+        <h1>Adicionar Paciente</h2>
+    </div>
+
+</body>
+</html>

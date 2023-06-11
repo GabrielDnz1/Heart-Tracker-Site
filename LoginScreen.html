@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #00ff43;
+            animation: background-animation 2s forwards;
+            overflow: hidden;
+        }
+
+        @keyframes background-animation {
+            0% {
+                background-color: #00ff43;
+            }
+            100% {
+                background-color: #111111;
+            }
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 12s ease-in-out;
+        }
+
+        .container.show {
+            opacity: 1;
+        }
+
+        .container form {
+            width: 300px;
+            padding: 20px;
+            background-color: transparent;
+            border-radius: 10px;
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            background-image: url('https://i.imgur.com/J1tbkD6.png'); /* Substitua com o URL da sua imagem */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 250px; /* Defina a altura desejada para a imagem */
+            width: 150%; /* Defina a largura desejada para a imagem */
+            margin-left: -25%;
+        }
+
+        .container label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .container input[type="text"],
+        .container input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: rgba(0, 255, 67, 0.3); /* Change the background color to semi-transparent green */
+            border: none;
+            color: white;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .container input[type="password"].error,
+        .container input[type="text"].error {
+            border: 2px solid red;
+        }
+
+        .container input[type="submit"] {
+            background-color: #00ff43;
+            color: white;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            width: 320px;
+            padding: 20px;
+        }
+
+        .notification {
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* Center the loader */
+        #loader {
+            display: none;
+            position: absolute;
+            left: 52.5%;
+            top: 82%;
+            z-index: 1;
+            width: 40px;
+            height: 40px;
+            margin: -76px 0 0 -76px;
+            border: 16px solid #ffffff;
+            border-radius: 50%;
+            border-top: 16px solid #00ff43;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Add animation to "page content" */
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from { bottom:-100px; opacity:0 } 
+            to { bottom:0px; opacity:1 }
+        }
+
+        @keyframes animatebottom { 
+            from{ bottom:-100px; opacity:0 } 
+            to{ bottom:0; opacity:1 }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', function() {
+            var container = document.querySelector('.container');
+            container.classList.add('show');
+        });
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            var notification = document.querySelector('.notification');
+            var usernameInput = document.getElementById('username');
+            var passwordInput = document.getElementById('password');
+            var loader = document.getElementById('loader');
+            var myDiv = document.getElementById('myDiv');
+
+            if (username === "Gabriel" && password === "Gabriel") {
+                loader.style.display = 'block';
+                setTimeout(function() {
+                    loader.style.display = 'none';
+                    myDiv.style.display = 'block';
+                    setTimeout(function() {
+                        window.location.href = "MainPage.html";
+                    }, 3000);
+                }, 4000);
+            }else{
+                notification.textContent = "Senha incorreta.";
+                notification.style.color = "red";
+
+                usernameInput.classList.add('error');
+                passwordInput.classList.add('error');
+
+                setTimeout(function() {
+                    notification.textContent = "";
+                    usernameInput.classList.remove('error');
+                    passwordInput.classList.remove('error');
+                }, 3000);
+            }
+        }
+    </script>
+</head>
+<body>  
+    <div id="loader"></div>
+
+    <div style="display:none;" id="myDiv" class="animate-bottom">
+        <h2></h2>
+        <p></p>
+    </div>
+
+    <div class="container">
+        <form onsubmit="handleFormSubmit(event)">
+            <h1></h1> 
+            <div class="notification"></div>
+            <input type="text" id="username" name="username" style="color:white" placeholder="Username" required>
+            <input type="password" id="password" name="password" style="color:white" placeholder="Password" required>     
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+</html>
